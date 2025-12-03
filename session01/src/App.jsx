@@ -4,6 +4,7 @@ import { AppBar, Toolbar, Typography, Button, Box, Container } from '@mui/materi
 import StudentList from './components/students/StudentList.jsx';
 import CourseList from './components/courses/CourseList.jsx';
 import GradeList from './components/grades/GradeList.jsx';
+import Test from './components/Test.jsx';
 
 function App() {
   const [currentView, setCurrentView] = useState('home');
@@ -64,6 +65,7 @@ function App() {
         </Toolbar>
       </AppBar>
       {renderView()}
+      <Test />
     </>
   )
 }

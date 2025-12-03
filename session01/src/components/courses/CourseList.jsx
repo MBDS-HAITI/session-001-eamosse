@@ -16,35 +16,10 @@ const CourseList = () => {
   const [courses, setCourses] = useState([]);
 
   useEffect(() => {
-    import('../../assets/data.json')
-      .then(module => {
-        const data = module.default;
-        const courseMap = new Map();
-        
-        data.forEach(item => {
-          if (!courseMap.has(item.course)) {
-            courseMap.set(item.course, {
-              name: item.course,
-              studentCount: 0,
-              grades: []
-            });
-          }
-          const course = courseMap.get(item.course);
-          course.studentCount++;
-          course.grades.push(item.grade);
-        });
-        
-        const coursesWithStats = Array.from(courseMap.values()).map(course => {
-          const avgGrade = (course.grades.reduce((sum, grade) => sum + grade, 0) / course.grades.length).toFixed(1);
-          return {
-            name: course.name,
-            studentCount: course.studentCount,
-            averageGrade: parseFloat(avgGrade)
-          };
-        });
-        
-        coursesWithStats.sort((a, b) => a.name.localeCompare(b.name));
-        setCourses(coursesWithStats);
+    fetch('http://localhost:8010/api/courses')
+    .then(response => response.json())
+      .then(data => {
+        setCourses(data);
       })
       .catch(error => {
         console.error('Error loading data:', error);
@@ -65,9 +40,9 @@ const CourseList = () => {
         <Table sx={{ minWidth: 650 }} aria-label="courses table">
           <TableHead>
             <TableRow sx={{ backgroundColor: '#9c27b0' }}>
+              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>ID</TableCell>
               <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Course Name</TableCell>
-              <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold' }}>Number of Students</TableCell>
-              <TableCell align="center" sx={{ color: 'white', fontWeight: 'bold' }}>Average Grade</TableCell>
+              <TableCell sx={{ color: 'white', fontWeight: 'bold' }}>Code</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -77,16 +52,10 @@ const CourseList = () => {
                 sx={{ '&:nth-of-type(odd)': { backgroundColor: '#f5f5f5' }, '&:hover': { backgroundColor: '#f3e5f5' } }}
               >
                 <TableCell component="th" scope="row" sx={{ fontWeight: 'bold' }}>
-                  {course.name}
+                  {course._id}
                 </TableCell>
-                <TableCell align="center">{course.studentCount}</TableCell>
-                <TableCell align="center">
-                  <Chip 
-                    label={course.averageGrade} 
-                    color={course.averageGrade >= 70 ? 'success' : 'warning'}
-                    size="small"
-                  />
-                </TableCell>
+                <TableCell align="center">{course.name}</TableCell>
+                <TableCell align="center">{course.code}</TableCell>
               </TableRow>
             ))}
           </TableBody>
